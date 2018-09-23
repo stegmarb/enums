@@ -12,7 +12,7 @@ public class CommandConsumerApp implements WordTransformer {
 
     @Override
     public void add(int charIndex, char character) {
-        if (charIndex > initialValue.length() + 1 || charIndex < 0) {
+        if (charIndex > initialValue.length() || charIndex < 0) {
             throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d, %c", initialValue, "add", charIndex, character));
         }
         lastCommand = new Command("add", charIndex);
