@@ -1,8 +1,9 @@
-package CommandApp;
+package commandApp;
 
 public class TesterClass {
 
     public static void main(String[] args) {
+
         CommandConsumerApp app = new CommandConsumerApp("almafa");
         app.replace(0, 'k');
         System.out.println(app.getInitialValue());

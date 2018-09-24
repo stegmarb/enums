@@ -1,13 +1,16 @@
-package CommandApp;
+package commandApp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandConsumerApp implements WordTransformer {
 
     private String initialValue;
-    private Command lastCommand;
+    private List<Command> commandList;
 
     CommandConsumerApp(String initialValue) {
         this.initialValue = initialValue;
-        this.lastCommand = new Command();
+        this.commandList = new ArrayList<>();
     }
 
     @Override
@@ -15,7 +18,7 @@ public class CommandConsumerApp implements WordTransformer {
         if (charIndex > initialValue.length() || charIndex < 0) {
             throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d, %c", initialValue, "add", charIndex, character));
         }
-        lastCommand = new Command("add", charIndex);
+        commandList.add(new Command("add", charIndex));
         if (charIndex == initialValue.length()) {
             initialValue = initialValue + character;
         } else {
@@ -40,7 +43,7 @@ public class CommandConsumerApp implements WordTransformer {
         if (charIndex > initialValue.length() - 1 || charIndex < 0) {
             throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d, %c", initialValue, "replace", charIndex, character));
         }
-        lastCommand = new Command("replace", charIndex, character, chars[charIndex]);
+        commandList.add(new Command("replace", charIndex, character, chars[charIndex]));
         chars[charIndex] = character;
         StringBuilder newWord = new StringBuilder();
         for (char element : chars) {
@@ -52,9 +55,9 @@ public class CommandConsumerApp implements WordTransformer {
     @Override
     public void remove(int charIndex) {
         if (charIndex > initialValue.length() - 1|| charIndex < 0) {
-            throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d", initialValue, lastCommand.getName(), lastCommand.getCharIndex()));
+            throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d", initialValue, "remove", charIndex));
         }
-        lastCommand = new Command("remove", charIndex, initialValue.charAt(charIndex));
+        commandList.add(new Command("remove", charIndex, initialValue.charAt(charIndex)));
         StringBuilder string = new StringBuilder();
         for (int i = 0; i < initialValue.length(); i++) {
             if (i != charIndex) {
@@ -66,9 +69,9 @@ public class CommandConsumerApp implements WordTransformer {
 
     @Override
     public void upper(int charIndex) {
-        lastCommand = new Command("upper", charIndex);
+        commandList.add(new Command("upper", charIndex));
         if (charIndex > initialValue.length() - 1 || charIndex < 0) {
-            throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d", initialValue, lastCommand.getName(), lastCommand.getCharIndex()));
+            throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d", initialValue, "upper", charIndex));
         }
         char[] chars = initialValue.toCharArray();
         chars[charIndex] = Character.toUpperCase(chars[charIndex]);
@@ -81,9 +84,9 @@ public class CommandConsumerApp implements WordTransformer {
 
     @Override
     public void lower(int charIndex) {
-        lastCommand = new Command("lower", charIndex);
+        commandList.add(new Command("lower", charIndex));
         if (charIndex > initialValue.length() - 1 || charIndex < 0) {
-            throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d", initialValue, lastCommand.getName(), lastCommand.getCharIndex()));
+            throw new IllegalArgumentException(String.format("%s, Wrong command: %s, %d", initialValue, "lower", charIndex));
         }
         char[] chars = initialValue.toCharArray();
         chars[charIndex] = Character.toLowerCase(chars[charIndex]);
@@ -97,6 +100,8 @@ public class CommandConsumerApp implements WordTransformer {
 
     @Override
     public void undo() {
+        Command lastCommand = commandList.get(commandList.size() - 1);
+        commandList.remove(commandList.size() - 1);
         switch (lastCommand.getName()) {
             case "add":
                 remove(lastCommand.getCharIndex());

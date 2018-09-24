@@ -1,4 +1,4 @@
-package CommandApp;
+package commandApp;
 
 public interface WordTransformer {
 
